@@ -1,5 +1,5 @@
 """
-Command Line Interface for the Timeseries Data Streamer.
+Command Line Interface for the CORIOLIX Playback System.
 
 Provides a CLI tool to stream timeseries data files using various protocols
 (UDP broadcast, UDP unicast, TCP) with configurable options.
@@ -23,8 +23,8 @@ def parse_arguments(args=None):
         argparse.Namespace: Parsed arguments
     """
     parser = argparse.ArgumentParser(
-        description='Stream timeseries data files using various protocols',
-        prog='timeseries-streamer'
+        description='CORIOLIX Playback - Stream timeseries data files using various protocols',
+        prog='coriolix-playback'
     )
     
     # Create subparsers for different command modes

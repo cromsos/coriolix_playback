@@ -1,0 +1,81 @@
+streams:
+  sensor_data_1:
+    file: "data/hyprad002003combined.crlx"
+    protocol: "udp_broadcast"
+    port: 30410
+    broadcast_addr: "172.20.30.8"
+    sensor_id: "hyprad002002"
+    interval: 1.0
+    update_timestamp: true
+    
+  sensor_data_2:
+    file: "data/pyrano190097combined.crlx"
+    protocol: "udp_unicast"
+    port: 30404
+    unicast_addr: "172.20.30.8"
+    sensor_id: "pyrano190096"
+    interval: 1.0
+    update_timestamp: true
+
+  sensor_data3:
+    file: "data/pyrgeo190072combined.crlx"
+    protocol: "udp_unicast"
+    port: 30403
+    unicast_addr: "172.20.30.8"
+    sensor_id: "SENSOR_002"
+    interval: 1.0
+    update_timestamp: true
+
+  sensor_data4:
+    file: "data/transm002005combined.crlx"
+    protocol: "udp_unicast"
+    port: 30314
+    unicast_addr: "172.20.30.8"
+    sensor_id: "transm002005"
+    interval: 1.0
+    update_timestamp: true
+
+  sensor_data5:
+    file: "data/partic002233combined.crlx"
+    protocol: "udp_unicast"
+    port: 30409
+    unicast_addr: "172.20.30.8"
+    sensor_id: "partic002233"
+    interval: 1.0
+    update_timestamp: true
+
+  sensor_data6gga:
+    file: "data/seapth000000combined_gga.crlx"
+    protocol: "udp_unicast"
+    port: 30398
+    unicast_addr: "172.20.30.8"
+    sensor_id: "seapth000000"
+    interval: 1.0
+    update_timestamp: true
+
+  sensor_data6vtg:
+    file: "data/seapth000000combined_vtg.crlx"
+    protocol: "udp_unicast"
+    port: 30398
+    unicast_addr: "172.20.30.8"
+    sensor_id: "seapth000000"
+    interval: 1.0
+    update_timestamp: true
+
+  sensor_data6hdt:
+    file: "data/seapth000000combined_hdt.crlx"
+    protocol: "udp_unicast"
+    port: 30398
+    unicast_addr: "172.20.30.8"
+    sensor_id: "seapth000000"
+    interval: 1.0
+    update_timestamp: true
+
+  sensor_data7:
+    file: "data/fluoro001638combined.crlx"
+    protocol: "udp_unicast"
+    port: 30405
+    unicast_addr: "172.20.30.8"
+    sensor_id: "fluoro001637"
+    interval: 1.0
+    update_timestamp: true

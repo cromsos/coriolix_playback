@@ -201,7 +201,7 @@ def test_main_integration(sample_crlx_file):
         
         # Test via main function with sys.argv simulation
         test_args = [
-            'timeseries-streamer',  # program name
+            'coriolix-playback',  # program name
             'stream',
             '--file', str(sample_crlx_file),
             '--protocol', 'udp_broadcast',
@@ -248,7 +248,7 @@ def test_main_config_integration():
             
             # Test via main function with sys.argv simulation
             test_args = [
-                'timeseries-streamer',  # program name
+                'coriolix-playback',  # program name
                 'config',
                 '--file', temp_config
             ]

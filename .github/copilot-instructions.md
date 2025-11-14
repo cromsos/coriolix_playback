@@ -1,6 +1,6 @@
-# Timeseries Data Reader Project
+# CORIOLIX Playback Project
 
-This project is a Python utility application for reading pre-recorded timeseries data to provide "dummy" data input to data acquisition systems in development.
+This project is a Python utility application for reading pre-recorded timeseries data to provide "dummy" data input to CORIOLIX data acquisition systems in development.
 
 ## Project Structure
 - Using Test-Driven Development (TDD) approach

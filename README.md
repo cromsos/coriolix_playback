@@ -1,6 +1,6 @@
-# Timeseries Data Reader
+# CORIOLIX Playback
 
-A Python utility for reading and streaming timeseries data files using various network protocols.
+A Python utility for reading and streaming timeseries data files using various network protocols. Built for CORIOLIX data acquisition system development.
 
 ## Features
 
@@ -43,13 +43,13 @@ Stream a single data file:
 
 ```bash
 # UDP Broadcast
-timeseries-streamer stream --file data/sensor1.crlx --protocol udp_broadcast --port 8080 --broadcast-addr 192.168.1.255
+coriolix-playback stream --file data/sensor1.crlx --protocol udp_broadcast --port 8080 --broadcast-addr 192.168.1.255
 
 # UDP Unicast
-timeseries-streamer stream --file data/sensor2.crlx --protocol udp_unicast --port 8081 --unicast-addr 192.168.1.100
+coriolix-playback stream --file data/sensor2.crlx --protocol udp_unicast --port 8081 --unicast-addr 192.168.1.100
 
 # TCP
-timeseries-streamer stream --file data/legacy.csv --protocol tcp --port 9090 --host localhost
+coriolix-playback stream --file data/legacy.csv --protocol tcp --port 9090 --host localhost
 ```
 
 ### Configuration File Streaming
@@ -57,7 +57,7 @@ timeseries-streamer stream --file data/legacy.csv --protocol tcp --port 9090 --h
 For production deployment with multiple streams, use a YAML configuration file:
 
 ```bash
-timeseries-streamer config --file config.yaml
+coriolix-playback config --file config.yaml
 ```
 
 ## Configuration File Format
