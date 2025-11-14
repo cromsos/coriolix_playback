@@ -1,0 +1,25 @@
+streams:
+  sensor_data_1:
+    file: "data/sensor1.crlx"
+    protocol: "udp_broadcast"
+    port: 8080
+    broadcast_addr: "192.168.1.255"
+    sensor_id: "SENSOR_001"
+    interval: 1.0
+    update_timestamp: true
+    
+  sensor_data_2:
+    file: "data/sensor2.crlx"
+    protocol: "udp_unicast"
+    port: 8081
+    unicast_addr: "192.168.1.100"
+    sensor_id: "SENSOR_002"
+    interval: 0.5
+    update_timestamp: true
+    
+  legacy_tcp:
+    file: "data/legacy.csv"
+    protocol: "tcp"
+    port: 9090
+    host: "localhost"
+    interval: 2.0

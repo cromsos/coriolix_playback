@@ -1,0 +1,34 @@
+# Sample Configuration Template
+# Copy this file to create your own configuration (e.g., my_config.yaml)
+# Place your actual CRLX files in the data/ directory
+
+streams:
+  example_sensor_1:
+    file: "data/your_sensor_data_1.crlx"
+    protocol: "udp_broadcast"
+    port: 8080
+    broadcast_addr: "192.168.1.255"  # Adjust for your network
+    sensor_id: "YOUR_SENSOR_001"     # Optional: override sensor ID
+    interval: 1.0                    # Seconds between messages
+    update_timestamp: true           # Use current time vs file timestamps
+    
+  example_sensor_2:
+    file: "data/your_sensor_data_2.crlx"
+    protocol: "udp_unicast"
+    port: 8081
+    unicast_addr: "192.168.1.100"   # Target host for unicast
+    sensor_id: "YOUR_SENSOR_002"
+    interval: 0.5
+    update_timestamp: true
+    
+  legacy_tcp_stream:
+    file: "data/legacy_data.csv"
+    protocol: "tcp"
+    port: 9090
+    host: "localhost"                # Required for TCP protocol
+    interval: 2.0
+
+# Optional defaults section
+defaults:
+  update_timestamp: true
+  interval: 1.0
