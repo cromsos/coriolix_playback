@@ -12,10 +12,32 @@ A Python utility for reading and streaming timeseries data files using various n
 
 ## Installation
 
-Install in development mode:
+1. **Clone the repository**:
+```bash
+git clone https://github.com/YOUR_ORG/coriolix_playback.git
+cd coriolix_playbook
+```
 
+2. **Create a virtual environment**:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+3. **Install in development mode**:
 ```bash
 pip install -e .
+```
+
+4. **For development with tests**:
+```bash
+pip install -e .[dev]
+```
+
+5. **Verify installation**:
+```bash
+coriolix-playback --help
+pytest -v  # Run tests (requires [dev] or [test] dependencies)
 ```
 
 ## Data Setup
