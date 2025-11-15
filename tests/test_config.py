@@ -215,9 +215,51 @@ defaults:
                 broadcast_addr='127.0.0.1',
                 sensor_id=None,
                 update_timestamp=True,
+                raw_data_only=False,
                 interval=0.1
             )
             
+    finally:
+        Path(config_file).unlink()
+
+
+def test_parse_config_with_raw_data_only():
+    """Test parsing config file with raw_data_only option."""
+    config_content = """
+defaults:
+  raw_data_only: false
+  update_timestamp: true
+  interval: 0.5
+
+streams:
+  test_stream_raw:
+    file: "/path/to/test.crlx"
+    protocol: "udp_unicast"
+    port: 8083
+    unicast_addr: "192.168.1.200"
+    raw_data_only: true
+"""
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        f.write(config_content)
+        config_file = f.name
+    
+    try:
+        parser = ConfigParser()
+        config = parser.parse(config_file)
+        
+        assert len(config.streams) == 1
+        
+        stream = config.streams[0]
+        assert stream.name == 'test_stream_raw'
+        assert stream.raw_data_only is True
+        assert stream.protocol == 'udp_unicast'
+        assert stream.unicast_addr == '192.168.1.200'
+        
+        # Verify defaults were applied correctly
+        assert stream.update_timestamp is True  # From defaults
+        assert stream.interval == 0.5  # From defaults
+        
     finally:
         Path(config_file).unlink()
 

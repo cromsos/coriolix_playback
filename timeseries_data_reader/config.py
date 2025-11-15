@@ -30,6 +30,7 @@ class StreamConfig:
     # Stream options
     sensor_id: Optional[str] = None
     update_timestamp: bool = True
+    raw_data_only: bool = False
     interval: float = 1.0
 
     def validate(self):
@@ -117,6 +118,7 @@ class ConfigParser:
                     unicast_addr=stream_data.get('unicast_addr', defaults.unicast_addr),
                     sensor_id=stream_data.get('sensor_id', defaults.sensor_id),
                     update_timestamp=stream_data.get('update_timestamp', defaults.update_timestamp),
+                    raw_data_only=stream_data.get('raw_data_only', defaults.raw_data_only),
                     interval=stream_data.get('interval', defaults.interval)
                 )
                 
@@ -138,6 +140,7 @@ class ConfigParser:
                     unicast_addr=stream_data.get('unicast_addr', defaults.unicast_addr),
                     sensor_id=stream_data.get('sensor_id', defaults.sensor_id),
                     update_timestamp=stream_data.get('update_timestamp', defaults.update_timestamp),
+                    raw_data_only=stream_data.get('raw_data_only', defaults.raw_data_only),
                     interval=stream_data.get('interval', defaults.interval)
                 )
                 
@@ -240,10 +243,12 @@ def _execute_single_stream(stream: StreamConfig) -> Dict[str, Any]:
             kwargs['broadcast_addr'] = stream.broadcast_addr
             kwargs['sensor_id'] = stream.sensor_id
             kwargs['update_timestamp'] = stream.update_timestamp
+            kwargs['raw_data_only'] = stream.raw_data_only
         elif stream.protocol == 'udp_unicast':
             kwargs['unicast_addr'] = stream.unicast_addr
             kwargs['sensor_id'] = stream.sensor_id
             kwargs['update_timestamp'] = stream.update_timestamp
+            kwargs['raw_data_only'] = stream.raw_data_only
         
         # Execute streaming
         count = reader.stream_data(**kwargs)

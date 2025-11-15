@@ -1,0 +1,21 @@
+defaults:
+  raw_data_only: false
+  update_timestamp: true
+  interval: 1.0
+
+streams:
+  raw_data_stream:
+    file: "data/partic002233combined.crlx"
+    protocol: "udp_unicast"
+    port: 30405
+    unicast_addr: "127.0.0.1"
+    raw_data_only: true
+    interval: 2.0
+    
+  normal_stream:
+    file: "data/partic002233combined.crlx"
+    protocol: "udp_unicast"
+    port: 30406
+    unicast_addr: "127.0.0.1"
+    raw_data_only: false
+    interval: 2.0

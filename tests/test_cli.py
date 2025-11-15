@@ -69,6 +69,29 @@ def test_parse_arguments_udp_unicast():
         Path(temp_file).unlink()
 
 
+def test_parse_arguments_raw_data_only():
+    """Test argument parsing with raw data only flag."""
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.crlx', delete=False) as f:
+        f.write("test data")
+        temp_file = f.name
+    
+    try:
+        args = parse_arguments([
+            'stream',
+            '--file', temp_file,
+            '--protocol', 'udp_unicast',
+            '--port', '8082', 
+            '--unicast-addr', '192.168.1.101',
+            '--raw-data-only'
+        ])
+        
+        assert args.command == 'stream'
+        assert args.protocol == 'udp_unicast'
+        assert args.raw_data_only is True
+    finally:
+        Path(temp_file).unlink()
+
+
 def test_parse_arguments_tcp_legacy():
     """Test argument parsing for legacy TCP mode."""
     with tempfile.NamedTemporaryFile(mode='w', suffix='.crlx', delete=False) as f:
@@ -136,6 +159,7 @@ def test_execute_streaming_udp_broadcast(sample_crlx_file):
             host=None,
             sensor_id=None,
             update_timestamp=True,
+            raw_data_only=False,
             interval=1.0
         )
         
@@ -150,6 +174,7 @@ def test_execute_streaming_udp_broadcast(sample_crlx_file):
             broadcast_addr='192.168.1.255',
             sensor_id=None,
             update_timestamp=True,
+            raw_data_only=False,
             interval=1.0
         )
         
@@ -174,6 +199,7 @@ def test_execute_streaming_udp_unicast(sample_crlx_file):
             host=None,
             sensor_id='test_sensor_999',
             update_timestamp=False,
+            raw_data_only=False,
             interval=0.5
         )
         
@@ -185,6 +211,7 @@ def test_execute_streaming_udp_unicast(sample_crlx_file):
             unicast_addr='192.168.1.100', 
             sensor_id='test_sensor_999',
             update_timestamp=False,
+            raw_data_only=False,
             interval=0.5
         )
         

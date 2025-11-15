@@ -133,3 +133,131 @@ def test_can_stream_via_udp_unicast(sample_crlx_file):
     
     # Timestamp should be original (update_timestamp=False)
     assert parts[0] == '2025-11-14T00:05:36.704224Z'
+
+
+def test_can_stream_raw_data_only_via_udp_unicast(sample_crlx_file):
+    """
+    Test UDP unicast streaming with raw data only (no timestamp/sensor_id).
+    
+    The stream should:
+    1. Send only the raw data message (3rd component)
+    2. Strip timestamp and sensor_id from output
+    3. Send to specified unicast address and port
+    """
+    # Setup UDP receiver
+    messages = []
+    port = 12347  # Different port for this test
+    unicast_addr = "127.0.0.1"
+    
+    def udp_receiver():
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind(("", port))
+        sock.settimeout(2.0)
+        
+        try:
+            while True:
+                data, addr = sock.recvfrom(1024)
+                messages.append(data.decode('utf-8').strip())
+        except socket.timeout:
+            pass
+        finally:
+            sock.close()
+    
+    # Start receiver in background
+    receiver_thread = threading.Thread(target=udp_receiver)
+    receiver_thread.start()
+    
+    # Give receiver time to bind
+    time.sleep(0.1)
+    
+    # Stream data with raw_data_only=True
+    reader = TimeseriesReader(sample_crlx_file)
+    count = reader.stream_data(
+        protocol='udp_unicast',
+        unicast_addr=unicast_addr,
+        port=port,
+        interval=0.1,
+        raw_data_only=True
+    )
+    
+    receiver_thread.join(timeout=3.0)
+    
+    # Verify results
+    assert count == 4
+    assert len(messages) == 4
+    
+    # Check messages contain only raw data (no timestamp or sensor_id)
+    expected_raw_data = [
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t532",
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t531",
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t532",
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t532"
+    ]
+    
+    for i, msg in enumerate(messages):
+        assert msg == expected_raw_data[i], f"Message {i}: expected '{expected_raw_data[i]}', got '{msg}'"
+
+
+def test_can_stream_raw_data_only_via_udp_broadcast(sample_crlx_file):
+    """
+    Test UDP broadcast streaming with raw data only (no timestamp/sensor_id).
+    
+    The stream should:
+    1. Send only the raw data message (3rd component)
+    2. Strip timestamp and sensor_id from output
+    3. Broadcast to specified address and port
+    """
+    # Setup UDP receiver
+    messages = []
+    port = 12348  # Different port for this test
+    broadcast_addr = "127.0.0.1"
+    
+    def udp_receiver():
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind(("", port))
+        sock.settimeout(2.0)
+        
+        try:
+            while True:
+                data, addr = sock.recvfrom(1024)
+                messages.append(data.decode('utf-8').strip())
+        except socket.timeout:
+            pass
+        finally:
+            sock.close()
+    
+    # Start receiver in background
+    receiver_thread = threading.Thread(target=udp_receiver)
+    receiver_thread.start()
+    
+    # Give receiver time to bind
+    time.sleep(0.1)
+    
+    # Stream data with raw_data_only=True
+    reader = TimeseriesReader(sample_crlx_file)
+    count = reader.stream_data(
+        protocol='udp_broadcast',
+        broadcast_addr=broadcast_addr,
+        port=port,
+        interval=0.1,
+        raw_data_only=True
+    )
+    
+    receiver_thread.join(timeout=3.0)
+    
+    # Verify results
+    assert count == 4
+    assert len(messages) == 4
+    
+    # Check messages contain only raw data (no timestamp or sensor_id)
+    expected_raw_data = [
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t532",
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t531",
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t532",
+        "CST-2005DR\t05072\t06604\t14647\t00.212\t532"
+    ]
+    
+    for i, msg in enumerate(messages):
+        assert msg == expected_raw_data[i], f"Message {i}: expected '{expected_raw_data[i]}', got '{msg}'"

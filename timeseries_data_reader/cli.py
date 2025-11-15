@@ -90,6 +90,12 @@ def parse_arguments(args=None):
     )
     
     stream_parser.add_argument(
+        '--raw-data-only',
+        action='store_true',
+        help='Send only raw data (3rd component), stripping timestamp and sensor_id'
+    )
+    
+    stream_parser.add_argument(
         '--interval',
         type=float,
         default=1.0,
@@ -161,10 +167,12 @@ def execute_streaming(args):
         kwargs['broadcast_addr'] = args.broadcast_addr
         kwargs['sensor_id'] = args.sensor_id
         kwargs['update_timestamp'] = args.update_timestamp
+        kwargs['raw_data_only'] = args.raw_data_only
     elif args.protocol == 'udp_unicast':
         kwargs['unicast_addr'] = args.unicast_addr
         kwargs['sensor_id'] = args.sensor_id
         kwargs['update_timestamp'] = args.update_timestamp
+        kwargs['raw_data_only'] = args.raw_data_only
     
     count = reader.stream_data(**kwargs)
     return count

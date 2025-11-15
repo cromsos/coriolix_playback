@@ -155,7 +155,7 @@ class TimeseriesReader:
     def stream_data(self, host: str = None, port: int = None, interval: float = 0.0, 
                    protocol: str = 'tcp', broadcast_addr: str = None, 
                    unicast_addr: str = None, sensor_id: str = None, 
-                   update_timestamp: bool = True):
+                   update_timestamp: bool = True, raw_data_only: bool = False):
         """
         Stream parsed records using various protocols.
 
@@ -168,6 +168,7 @@ class TimeseriesReader:
             unicast_addr (str, optional): Target address for UDP unicast
             sensor_id (str, optional): Override sensor_id in messages
             update_timestamp (bool): Whether to update timestamps to current time
+            raw_data_only (bool): If True, send only raw data (3rd component) without timestamp/sensor_id
 
         Returns:
             int: Number of records sent
@@ -181,10 +182,10 @@ class TimeseriesReader:
             return self._stream_tcp(host, port, interval)
         elif protocol == 'udp_broadcast':
             return self._stream_udp_broadcast(broadcast_addr, port, interval, 
-                                            sensor_id, update_timestamp)
+                                            sensor_id, update_timestamp, raw_data_only)
         elif protocol == 'udp_unicast':
             return self._stream_udp_unicast(unicast_addr, port, interval,
-                                          sensor_id, update_timestamp)
+                                          sensor_id, update_timestamp, raw_data_only)
         else:
             raise ValueError(f"Unsupported protocol: {protocol}")
     
@@ -205,7 +206,8 @@ class TimeseriesReader:
         return len(records)
     
     def _stream_udp_broadcast(self, broadcast_addr: str, port: int, interval: float,
-                            sensor_id_override: str = None, update_timestamp: bool = True):
+                            sensor_id_override: str = None, update_timestamp: bool = True,
+                            raw_data_only: bool = False):
         """Stream data via UDP broadcast in CRLX format."""
         if not broadcast_addr:
             raise ValueError("broadcast_addr is required for UDP broadcast")
@@ -219,9 +221,13 @@ class TimeseriesReader:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             
             for rec in records:
-                # Convert record back to CRLX format
-                crlx_line = self._format_as_crlx(rec, sensor_id_override, update_timestamp)
-                sock.sendto(crlx_line.encode('utf-8'), (broadcast_addr, port))
+                # Convert record back to CRLX format or raw data only
+                if raw_data_only:
+                    message = rec['raw_data']
+                else:
+                    message = self._format_as_crlx(rec, sensor_id_override, update_timestamp)
+                
+                sock.sendto(message.encode('utf-8'), (broadcast_addr, port))
                 
                 if interval > 0:
                     time.sleep(interval)
@@ -234,7 +240,8 @@ class TimeseriesReader:
         return len(records)
     
     def _stream_udp_unicast(self, unicast_addr: str, port: int, interval: float,
-                          sensor_id_override: str = None, update_timestamp: bool = True):
+                          sensor_id_override: str = None, update_timestamp: bool = True,
+                          raw_data_only: bool = False):
         """Stream data via UDP unicast in CRLX format."""
         if not unicast_addr:
             raise ValueError("unicast_addr is required for UDP unicast")
@@ -247,9 +254,13 @@ class TimeseriesReader:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             
             for rec in records:
-                # Convert record back to CRLX format
-                crlx_line = self._format_as_crlx(rec, sensor_id_override, update_timestamp)
-                sock.sendto(crlx_line.encode('utf-8'), (unicast_addr, port))
+                # Convert record back to CRLX format or raw data only
+                if raw_data_only:
+                    message = rec['raw_data']
+                else:
+                    message = self._format_as_crlx(rec, sensor_id_override, update_timestamp)
+                
+                sock.sendto(message.encode('utf-8'), (unicast_addr, port))
                 
                 if interval > 0:
                     time.sleep(interval)
