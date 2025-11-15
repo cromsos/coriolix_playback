@@ -1,0 +1,9 @@
+streams:
+  test_stream:
+    file: "data/test_small.crlx"
+    protocol: "udp_unicast"
+    port: 30398
+    unicast_addr: "172.20.30.8"  # Change this to your target IP
+    sensor_id: "seapth000000"
+    interval: 0.1  # Fast for testing
+    update_timestamp: true
