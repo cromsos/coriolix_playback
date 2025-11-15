@@ -201,10 +201,11 @@ defaults:
             
             results = execute_config(config_file)
             
+            # New format: dict mapping stream name -> record count
+            assert isinstance(results, dict)
             assert len(results) == 1
-            assert results[0]['name'] == 'test_stream'
-            assert results[0]['records_sent'] == 4
-            assert results[0]['success'] is True
+            assert 'test_stream' in results
+            assert results['test_stream'] == 4
             
             # Verify TimeseriesReader was called correctly
             mock_reader_class.assert_called_once_with(str(sample_crlx_file))
@@ -255,9 +256,11 @@ defaults:
             
             results = execute_config(config_file, parallel=True)
             
+            # New format: dict mapping stream name -> record count
+            assert isinstance(results, dict)
             assert len(results) == 2
-            assert all(result['success'] for result in results)
-            assert {result['name'] for result in results} == {'stream_1', 'stream_2'}
+            assert set(results.keys()) == {'stream_1', 'stream_2'}
+            assert all(count > 0 for count in results.values())  # All streams should have sent records
             
             # Both streams should have been executed
             assert mock_reader_class.call_count == 2

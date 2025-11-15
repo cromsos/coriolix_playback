@@ -148,7 +148,7 @@ class ConfigParser:
         return Config(streams=streams, defaults=defaults)
 
 
-def execute_config(config_file: str, parallel: bool = False) -> List[Dict[str, Any]]:
+def execute_config(config_file: str, parallel: bool = True) -> Dict[str, int]:
     """
     Execute streams from configuration file.
     
@@ -157,15 +157,28 @@ def execute_config(config_file: str, parallel: bool = False) -> List[Dict[str, A
         parallel (bool): Whether to run streams in parallel
         
     Returns:
-        List[Dict]: Results for each stream with name, success, records_sent, error
+        Dict[str, int]: Mapping of stream name to number of records sent
     """
     parser = ConfigParser()
     config = parser.parse(config_file)
     
     if parallel:
-        return _execute_streams_parallel(config.streams)
+        results_list = _execute_streams_parallel(config.streams)
     else:
-        return _execute_streams_sequential(config.streams)
+        results_list = _execute_streams_sequential(config.streams)
+    
+    # Convert list of results to simple dict mapping stream name -> record count
+    results_dict = {}
+    for result in results_list:
+        if result['success']:
+            results_dict[result['name']] = result['records_sent']
+        else:
+            # For failed streams, show 0 records and potentially log error
+            results_dict[result['name']] = 0
+            if result['error']:
+                print(f"⚠️  Stream '{result['name']}' failed: {result['error']}")
+    
+    return results_dict
 
 
 def _execute_streams_sequential(streams: List[StreamConfig]) -> List[Dict[str, Any]]:
@@ -197,7 +210,7 @@ def _execute_streams_parallel(streams: List[StreamConfig]) -> List[Dict[str, Any
     for thread in threads:
         thread.join()
     
-    # Return results in original order
+    # Return results in original order as list
     return [results[stream.name] for stream in streams]
 
 
