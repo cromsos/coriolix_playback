@@ -213,20 +213,27 @@ class TimeseriesReader:
             raise ValueError("port is required")
             
         records = self.read_data()
+        print(f"DEBUG: Starting UDP broadcast to {broadcast_addr}:{port} with {len(records)} records")
         
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             
-            for rec in records:
+            for i, rec in enumerate(records):
                 # Convert record back to CRLX format
                 crlx_line = self._format_as_crlx(rec, sensor_id_override, update_timestamp)
                 sock.sendto(crlx_line.encode('utf-8'), (broadcast_addr, port))
+                
+                if i == 0:  # Debug first packet
+                    print(f"DEBUG: Sent first packet to {broadcast_addr}:{port}: {crlx_line[:80]}...")
+                if (i + 1) % 100 == 0:  # Progress every 100 records
+                    print(f"DEBUG: Sent {i + 1} packets to {broadcast_addr}:{port}")
                 
                 if interval > 0:
                     time.sleep(interval)
                     
             sock.close()
+            print(f"DEBUG: Completed UDP broadcast to {broadcast_addr}:{port} - sent {len(records)} records")
             
         except OSError as e:
             raise ConnectionError(f"Failed to broadcast to {broadcast_addr}:{port}: {e}")
@@ -242,19 +249,26 @@ class TimeseriesReader:
             raise ValueError("port is required")
             
         records = self.read_data()
+        print(f"DEBUG: Starting UDP unicast to {unicast_addr}:{port} with {len(records)} records")
         
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             
-            for rec in records:
+            for i, rec in enumerate(records):
                 # Convert record back to CRLX format
                 crlx_line = self._format_as_crlx(rec, sensor_id_override, update_timestamp)
                 sock.sendto(crlx_line.encode('utf-8'), (unicast_addr, port))
+                
+                if i == 0:  # Debug first packet
+                    print(f"DEBUG: Sent first packet to {unicast_addr}:{port}: {crlx_line[:80]}...")
+                if (i + 1) % 100 == 0:  # Progress every 100 records
+                    print(f"DEBUG: Sent {i + 1} packets to {unicast_addr}:{port}")
                 
                 if interval > 0:
                     time.sleep(interval)
                     
             sock.close()
+            print(f"DEBUG: Completed UDP unicast to {unicast_addr}:{port} - sent {len(records)} records")
             
         except OSError as e:
             raise ConnectionError(f"Failed to send to {unicast_addr}:{port}: {e}")
